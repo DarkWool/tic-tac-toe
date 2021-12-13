@@ -1,19 +1,46 @@
 // Module
 const gameBoard = (function () {
-    let boardContent = ["x", "o", "x", "o", "x", "x", "o", "o", "x"];
-    const board = document.getElementById("gameBoard");
+    let boardContent = ["x", "o", "x", "o", "o", "x"];
 
-    // The purpose of this function will be to ONLY render the contents of the boardContent array to the page.
+    // DOM element
+    const boxes = document.getElementById("gameBoard").children;
+
+    // Bind events
+    for (box of boxes) {
+        box.addEventListener("click", addNewPlay);
+    }
+
     function _render() {
-        boardContent.forEach(el => {
-            board.textContent += el;
+        boardContent.forEach((el, index) => {
+            boxes[index].textContent = el;
         })
     }
 
+    function _detachEvents(box) {
+        box.removeEventListener("click", addNewPlay);
+    }
+
+    function addNewPlay(e) {
+        const box = e.target;
+        console.log(e);
+        if (!box.textContent) {
+            box.textContent = "x";
+        }
+
+        _detachEvents(box);
+    }
+
     _render();
+
+    return {
+        boardContent
+    }
 })();
 
 // Factory Function
-const createPlayer = () => {
-    return {};
+const createPlayer = (name, turn) => {
+    return { name, turn };
 }
+
+let playerOne = createPlayer('wool', false);
+console.log(playerOne);
