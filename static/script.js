@@ -1,7 +1,26 @@
 // Module to manage the game flow
+const menu = (function () {
+	const onePlayerBtn = document.getElementById("onePlayer");
+	const twoPlayersBtn = document.getElementById("twoPlayers");
+	const menu = document.getElementById("gameMenu");
+	const game = document.getElementById("game");
+	const newBg = document.getElementsByClassName("green-bg")[0];
+
+	onePlayerBtn.addEventListener("click", startGame);
+
+	function startGame() {
+		menu.remove();
+		game.hidden = false;
+		game.classList.remove("hide-el");
+		game.classList.add("flex-container");
+		game.classList.add("active");
+		newBg.classList.add("active");
+	}
+})();
+
 const game = (function () {
-	const playerOne = createPlayer("Wool", true, "x");
-	const playerTwo = createPlayer("PC", false, "o");
+	const playerOne = createPlayer("Wool", true, "X");
+	const playerTwo = createPlayer("PC", false, "O");
 
 	const boardSection = document.getElementById("gameBoard");
 	const gameResult = document.createElement("p");
@@ -103,9 +122,11 @@ const gameBoard = (function () {
 	}
 
 	function _addNewPlay(e) {
-		let symbol = game.getSymbol();
-
 		const box = e.target;
+		
+		let symbol = game.getSymbol();
+		(symbol === 'O') ? box.classList.add('second-player') : false;
+		
 		let index = boxesArray.indexOf(box);
 		board[index] = symbol;					
 		_render();

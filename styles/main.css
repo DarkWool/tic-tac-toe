@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Mohave:wght@300;400;500;600;700&family=Raleway:wght@100;200;800;900&display=swap');
+
 *, *::before, *::after {
     box-sizing: border-box;
     margin: 0;
@@ -9,32 +11,225 @@
 
 html {
     font-size: 62.5%;
+    height: 100%;
 }
 
 body {
     font-family: Helvetica, Arial, sans-serif;
+    font-size: 1.8rem;
+    /* background-color: #14BDAC; */
+    margin: 0;
+    line-height: 1.1;
+    height: 100%;
+    color: hsl(0, 0%, 15%);
+}
+
+.green-bg {
+    background-color: #14bdac;
+    min-height: 100%;
+    width: 100%;
+    position: absolute;
+    /* top: 100%; */
+    bottom: 100%;
+    margin: 0;
+    overflow: hidden;
+    transition: bottom .5s cubic-bezier(.77,0,.18,1),
+                top .5s cubic-bezier(.77,0,.18,1);
+}
+
+.green-bg.active {
+    bottom: 0%;
+    /* top: 0%; */
+}
+
+main {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    max-width: 1200px;
+    height: 100%;
+    margin: auto;
+}
+
+header {
+    text-align: center;
+    flex-grow: 0;
+    /* width: 50%; */
+}
+
+header > p {
+    font-size: 2.5rem;
+    font-weight: 600;
+    max-width: 700px;
+}
+
+.flex-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+h1 {
+    font-family: 'Mohave', sans-serif;
+    font-size: 11rem;
+    letter-spacing: -0.045em;
+    line-height: 1;
+    text-transform: uppercase;
+    animation: test 1s forwards;
+}
+
+h2 {
+    font-family: 'Mohave', sans-serif;
+    letter-spacing: -0.045em;
+    font-size: 9rem;
+    font-weight: 700;
+    text-transform: uppercase;
+}
+
+@keyframes test {
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+button {
+    font-size: 2rem;
+    font-weight: bold;
+    border: none;
+    text-align: center;
+    cursor: pointer;
+}
+
+.primary-btn {
+    border-radius: 6px;
+    padding: 2.5rem 3.5rem;
+    margin: 0 7px;
+    transition: .25s all;
+    text-transform: uppercase;
+    position: relative;
+    top: 0;
+    text-shadow: 0px 4px 10px rgba(0, 0, 0, 0.25);
+    background-color: hsl(174, 99%, 46%);
+    color: #262626;
+    box-shadow: 0px 49px 75px rgba(0, 240, 219, 0.34), 0px 5.06172px 14.6221px rgba(9, 240, 220, 0.4);
+}
+
+/*
+.primary-btn::after {
+    content: "";
+    border: 1px solid white;
+    margin-left: 8px;
+}
+*/
+
+.primary-btn:hover {
+    top: -7px;
+    background-color: HSL(173.8, 100%, 30%);
+    box-shadow: 0px 49px 75px rgba(1, 203, 183, 0.48), 0px 5.06172px 14.6221px hsla(174, 98%, 25%, 0.452);
+    color: white;
+}
+
+#game {
+    gap: 30px;
 }
 
 #gameBoard {
     display: grid;
     justify-content: center;
     align-items: center;
-    gap: 1rem;
-    grid-template-columns: repeat(3, minmax(125px, 200px));
-    grid-template-rows: repeat(3, minmax(125px, 200px));
+    gap: 1.5rem;
+    grid-template-columns: repeat(3, minmax(125px, 160px));
+    grid-template-rows: repeat(3, minmax(125px, 160px));
     font-size: 15rem;
-    color: white;
-    /* background-color: hsl(0, 0%, 5%); */
+    background-color: #06a494;
 }
 
 #gameBoard > div {
-    margin: auto;
     display: flex;
     align-items: center;
     justify-content: center;
+    margin: auto;
     height: 100%;
     width: 100%;
     cursor: pointer;
-    background-color: hsl(0, 0%, 8%);
+    background-color: #14bdac;
+    color: #464646;
+    font-family: 'Raleway', sans-serif;
+    font-size: 10rem;
+    font-weight: 800;
+    text-transform: uppercase;
     user-select: none;
+}
+
+#gameBoard > .second-player {
+    color: #fff1c4;
+}
+
+.game-status {
+    font-size: 32px;
+    font-weight: 600;
+    text-align: center;
+}
+
+::selection {
+    background-color: hsl(174, 81%, 65%);
+}
+
+
+
+/* ------- Background shapes ------- */
+.background-shape {
+	font-family: Raleway, sans-serif;
+	color: #00E8D1;
+	position: absolute;
+	text-shadow: 0px 4px 75px rgba(22, 254, 231, 1);
+    user-select: none;
+}
+
+@keyframes letters-motion {
+    from {
+        transform: translateY(0px) rotate(var(--rot));
+    }
+    
+    to {
+        transform: translateY(20px) rotate(var(--rot));
+    }
+}
+
+.background-shape.left {
+    --rot: -17deg;
+    font-size: 9.6rem;
+    font-weight: 900;
+    left: 25%;
+    bottom: 35%;
+    animation: letters-motion 3.5s infinite alternate ease-in-out;
+}
+
+.background-shape.right {
+    --rot: 20deg;
+    font-size: 8.4rem;
+    font-weight: 900;
+    right: 16%;
+    top: 29%;
+    animation: letters-motion 4.5s infinite alternate-reverse cubic-bezier(.79,.14,.15,.86);
+}
+
+.background-shape.up {
+    --rot: -25deg;
+    font-size: 5.2rem;
+    font-weight: 900;
+    top: 5%;
+    left: 45%;
+    animation: letters-motion 3s infinite alternate-reverse ease-in-out;
+}
+
+.background-shape.down {
+    --rot: 25deg;
+    font-size: 7.4rem;
+    font-weight: 800;
+    right: 30%;
+    bottom: 15%;
+    animation: letters-motion 4.5s infinite alternate cubic-bezier(.79,.14,.15,.86);
 }
