@@ -17,14 +17,15 @@
             <div class="background-shape down">x</div>
             <h1>TIC-TAC-TOE</h1>
             <div>
-                <button type="button" id="onePlayer" class="primary-btn">1 player</button><button type="button" id="twoPlayers" class="primary-btn">2 players</button>
+                <button type="button" id="onePlayer" class="primary-btn">2 players</button>
+                <!-- <button type="button" id="twoPlayers" class="primary-btn">2 players</button> -->
             </div>
         </section>
         
         <section id="game" class="green-bg">
             <header>
                 <h2>TIC-TAC-TOE</h2>
-                <p>Player's 1 turn</p>
+                <p id="gameDisplay"></p>
             </header>
             <section id="gameBoard">
                 <div></div>
@@ -38,7 +39,7 @@
                 <div></div>
             </section>
             <div>
-                <button type="button" class="primary-btn">Restart Game</button>
+                <button type="button" id="restartGame" class="game-btn">Restart Game</button>
             </div>
         </section>
     </main>

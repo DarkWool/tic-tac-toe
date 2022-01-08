@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Mohave:wght@300;400;500;600;700&family=Raleway:wght@100;200;800;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Fira+Sans:wght@100;200;300;400;500;600;700;800;900&family=Mohave:wght@300;400;500;600;700&family=Raleway:wght@100;200;300;800;900&display=swap');
 
 *, *::before, *::after {
     box-sizing: border-box;
@@ -15,9 +15,8 @@ html {
 }
 
 body {
-    font-family: Helvetica, Arial, sans-serif;
+    font-family: 'Fira Sans', sans-serif;
     font-size: 1.8rem;
-    /* background-color: #14BDAC; */
     margin: 0;
     line-height: 1.1;
     height: 100%;
@@ -29,25 +28,19 @@ body {
     min-height: 100%;
     width: 100%;
     position: absolute;
-    /* top: 100%; */
-    bottom: 100%;
     margin: 0;
     overflow: hidden;
-    transition: bottom .5s cubic-bezier(.77,0,.18,1),
-                top .5s cubic-bezier(.77,0,.18,1);
+    transform: translateY(-100%);
+    transition: transform .5s cubic-bezier(.77,0,.18,1);
 }
 
 .green-bg.active {
-    bottom: 0%;
-    /* top: 0%; */
+    transform: translateY(0);
 }
 
 main {
     display: flex;
     flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    max-width: 1200px;
     height: 100%;
     margin: auto;
 }
@@ -55,13 +48,15 @@ main {
 header {
     text-align: center;
     flex-grow: 0;
-    /* width: 50%; */
+    width: 100%;
 }
 
 header > p {
     font-size: 2.5rem;
     font-weight: 600;
-    max-width: 700px;
+    padding: 10px;
+    background-color: #1f2828;
+    color: white;
 }
 
 .flex-container {
@@ -71,27 +66,12 @@ header > p {
     justify-content: center;
 }
 
-h1 {
-    font-family: 'Mohave', sans-serif;
-    font-size: 11rem;
-    letter-spacing: -0.045em;
-    line-height: 1;
-    text-transform: uppercase;
-    animation: test 1s forwards;
-}
-
 h2 {
     font-family: 'Mohave', sans-serif;
     letter-spacing: -0.045em;
     font-size: 9rem;
     font-weight: 700;
     text-transform: uppercase;
-}
-
-@keyframes test {
-    100% {
-        transform: rotate(360deg);
-    }
 }
 
 button {
@@ -103,26 +83,18 @@ button {
 }
 
 .primary-btn {
+    background-color: hsl(174, 99%, 46%);
     border-radius: 6px;
+    box-shadow: 0px 49px 75px rgba(0, 240, 219, 0.34), 0px 5.06172px 14.6221px rgba(9, 240, 220, 0.4);
+    color: #262626;
     padding: 2.5rem 3.5rem;
     margin: 0 7px;
-    transition: .25s all;
     text-transform: uppercase;
+    text-shadow: 0px 4px 10px rgba(0, 0, 0, 0.25);
+    transition: all .25s;
     position: relative;
     top: 0;
-    text-shadow: 0px 4px 10px rgba(0, 0, 0, 0.25);
-    background-color: hsl(174, 99%, 46%);
-    color: #262626;
-    box-shadow: 0px 49px 75px rgba(0, 240, 219, 0.34), 0px 5.06172px 14.6221px rgba(9, 240, 220, 0.4);
 }
-
-/*
-.primary-btn::after {
-    content: "";
-    border: 1px solid white;
-    margin-left: 8px;
-}
-*/
 
 .primary-btn:hover {
     top: -7px;
@@ -139,11 +111,11 @@ button {
     display: grid;
     justify-content: center;
     align-items: center;
-    gap: 1.5rem;
+    gap: 15px;
     grid-template-columns: repeat(3, minmax(125px, 160px));
     grid-template-rows: repeat(3, minmax(125px, 160px));
     font-size: 15rem;
-    background-color: #06a494;
+    background-color: hsl(174, 93%, 35%);
 }
 
 #gameBoard > div {
@@ -155,9 +127,9 @@ button {
     width: 100%;
     cursor: pointer;
     background-color: #14bdac;
-    color: #464646;
+    color: hsl(0, 0%, 25%);
     font-family: 'Raleway', sans-serif;
-    font-size: 10rem;
+    font-size: 8.5rem;
     font-weight: 800;
     text-transform: uppercase;
     user-select: none;
@@ -173,10 +145,25 @@ button {
     text-align: center;
 }
 
-::selection {
-    background-color: hsl(174, 81%, 65%);
+.game-btn {
+    background-color: #1f2828;
+    border-radius: 6px;
+    box-shadow: 0px 49px 75px rgba(8, 72, 67, 0.29), 0px 5.06172px 14.6221px rgba(12, 81, 75, 0.54);
+    color: white;
+    font-size: 1.8rem;
+    margin: 0 7px;
+    padding: 25px 30px;
+    position: relative;
+    text-transform: uppercase;
+    top: 0;
+    transition: all .25s ease-in-out;
 }
 
+.game-btn:hover {
+    top: -5px;
+    background-color: hsl(172.6, 62%, 25%);
+    box-shadow: 0px 49px 75px rgba(33, 91, 85, 0.3), 0px 5.06172px 14.6221px hsla(174.7, 81%, 8.2%, 0.3);
+}
 
 
 /* ------- Background shapes ------- */
@@ -213,7 +200,7 @@ button {
     font-weight: 900;
     right: 16%;
     top: 29%;
-    animation: letters-motion 4.5s infinite alternate-reverse cubic-bezier(.79,.14,.15,.86);
+    animation: letters-motion 4.5s infinite alternate-reverse ease-in-out;
 }
 
 .background-shape.up {
@@ -232,4 +219,24 @@ button {
     right: 30%;
     bottom: 15%;
     animation: letters-motion 4.5s infinite alternate cubic-bezier(.79,.14,.15,.86);
+}
+
+
+/* Menu */
+#gameMenu {
+    margin: auto;
+}
+
+h1 {
+    font-family: 'Mohave', sans-serif;
+    font-size: 11rem;
+    letter-spacing: -0.045em;
+    line-height: 1;
+    text-transform: uppercase;
+}
+
+
+/* Selection */
+::selection {
+    background-color: hsl(174, 81%, 65%);
 }
