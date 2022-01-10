@@ -43,11 +43,11 @@ const game = (mode) => {
 	}
 
 	// Initial state
-	gameDisplay.textContent = `${playerOne.getMarker()}'s turn`;
+	gameDisplay.textContent = `${playerOne.marker}'s turn`;
 
 	// Functions and vars for Single Player mode.
-	let markerOne = playerOne.getMarker();
-	let markerTwo = playerTwo.getMarker();
+	let markerOne = playerOne.marker;
+	let markerTwo = playerTwo.marker;
 
 	function _spNewPlay(e) {
 		const box = e.target;
@@ -104,7 +104,7 @@ const game = (mode) => {
 		const box = e.target;
 		
 		let player = _getPlayer();
-		let marker = player.getMarker();
+		let marker = player.marker;
 		(marker === 'O') ? box.classList.add("second-player") : false;
 		
 		gameBoard.addMarker(boxesArray.indexOf(box), marker);
@@ -131,10 +131,10 @@ const game = (mode) => {
 	function _changePlayersTurn() {
 		if (turn === "playerOne") {
 			turn = "playerTwo";
-			gameDisplay.textContent = `${playerTwo.getMarker()}'s turn`;
+			gameDisplay.textContent = `${playerTwo.marker}'s turn`;
 		} else {
 			turn = "playerOne";
-			gameDisplay.textContent = `${playerOne.getMarker()}'s turn`;
+			gameDisplay.textContent = `${playerOne.marker}'s turn`;
 		}
 	}
 	
@@ -151,7 +151,7 @@ const game = (mode) => {
 
 		turnsPlayed = 0;
 		turn = "playerOne";
-		gameDisplay.textContent = `${playerOne.getMarker()}'s turn`;
+		gameDisplay.textContent = `${playerOne.marker}'s turn`;
 
 		for (box of boxes) {
 			box.innerHTML = "";
@@ -213,10 +213,11 @@ const gameBoard = (function () {
 
 function createPlayer(name, marker) {
 	return {
-		name,
-		marker,
-		getMarker() {
-			return this.marker;
+		get name() {
+			return name;
+		},
+		get marker() {
+			return marker;
 		}
 	};
 }
