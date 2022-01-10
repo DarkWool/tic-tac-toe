@@ -2,20 +2,22 @@ const menu = (function () {
 	const onePlayerBtn = document.getElementById("onePlayer");
 	const twoPlayersBtn = document.getElementById("twoPlayers");
 	const menu = document.getElementById("gameMenu");
-	const game = document.getElementById("game");
+	const gameSection = document.getElementById("game");
 	const newBg = document.getElementsByClassName("green-bg")[0];
 	
-	onePlayerBtn.addEventListener("click", startGame);
+	onePlayerBtn.addEventListener("click", startGame.bind(onePlayerBtn, "onePlayer"));
+	twoPlayersBtn.addEventListener("click", startGame.bind(twoPlayersBtn, "twoPlayers"));
 	
-	function startGame() {
+	function startGame(mode) {
+		game(mode);
 		menu.remove();
-		game.classList.add("flex-container", "active");
+		gameSection.classList.add("flex-container", "active");
 		newBg.classList.add("active");
 	}
 })();
 
 // Module to manage the game flow
-const game = (function () {
+const game = (mode) => {
 	// Players
 	const playerOne = createPlayer("Wool", "X");
 	const playerTwo = createPlayer("PC", "O");
@@ -31,14 +33,70 @@ const game = (function () {
 	let turn = "playerOne";
 	let turnsPlayed = 0;
 
-	// Events 
-	restartBtn.addEventListener("click", _restartGame);
-	for (box of boxes) {
-		box.addEventListener("click", _newPlay);
+	// Events
+	if (mode === "onePlayer") {
+		restartBtn.addEventListener("click", _restartGame.bind(restartBtn, _spNewPlay));
+		_attachAllEvents(_spNewPlay);
+	} else {
+		restartBtn.addEventListener("click", _restartGame.bind(restartBtn, _newPlay));
+		_attachAllEvents(_newPlay);
 	}
 
 	// Initial state
 	gameDisplay.textContent = `${playerOne.getMarker()}'s turn`;
+
+	// Functions and vars for Single Player mode.
+	let markerOne = playerOne.getMarker();
+	let markerTwo = playerTwo.getMarker();
+
+	function _spNewPlay(e) {
+		const box = e.target;
+		if (_turnLogic(boxesArray.indexOf(box), box, markerOne)) return;
+
+		_newComputerPlay();
+	}
+
+	function _newComputerPlay() {
+		let index;
+		let board = gameBoard.getBoard();
+
+		do {
+			index = _getRandomIndex();
+		} while (board[index]);
+
+		boxes[index].classList.add("second-player");
+		_turnLogic(index, boxes[index], markerTwo);
+	}
+
+	function _turnLogic(index, box, marker) {
+		turnsPlayed++;
+
+		gameBoard.addMarker(index, marker);
+		
+		_render();
+		box.removeEventListener("click", _spNewPlay);
+
+		if (_checkForWinOrDraw(marker)) return true;
+
+		_changePlayersTurn();
+	}
+
+	function _getRandomIndex() {
+		return Math.floor(Math.random() * 9);
+	}
+
+	function _checkForWinOrDraw(marker) {
+		if (turnsPlayed > 4 && gameBoard.checkForWin()) {
+			_detachAllEvents(_spNewPlay);
+			_setWinMessage(marker);
+			return true;
+		} else if (turnsPlayed === 9) {
+			_setDrawMessage();
+			return true;
+		}
+	}
+
+	
 
 	// General functions
 	function _newPlay(e) {
@@ -52,12 +110,12 @@ const game = (function () {
 		gameBoard.addMarker(boxesArray.indexOf(box), marker);
 		
 		_render();
-		_detachSingleEvent(box);
+		box.removeEventListener("click", _newPlay);
 
 		// Check if anyone has won when 4 turns have passed,
 		// if there is not any win and the number of turns is 9 it means that its a draw.
 		if (turnsPlayed > 4 && gameBoard.checkForWin()) {
-			_detachAllEvents();
+			_detachAllEvents(_newPlay);
 			return _setWinMessage(marker);
 		} else if (turnsPlayed === 9) {
 			return _setDrawMessage();
@@ -88,7 +146,7 @@ const game = (function () {
 		gameDisplay.textContent = "Draw";
 	}
 	
-	function _restartGame() {
+	function _restartGame(callback) {
 		gameBoard.restartBoard();
 
 		turnsPlayed = 0;
@@ -98,7 +156,7 @@ const game = (function () {
 		for (box of boxes) {
 			box.innerHTML = "";
 			box.classList.remove("second-player");
-			box.addEventListener("click", _newPlay);
+			box.addEventListener("click", callback);
 		}
 	}
 
@@ -106,20 +164,22 @@ const game = (function () {
 		gameBoard.getBoard().forEach((el, index) => boxes[index].textContent = el);
 	}
 
-	// Event functions
-	function _detachSingleEvent(box) {
-		box.removeEventListener("click", _newPlay);
-	}
-
-	function _detachAllEvents() {
+	// Events functions
+	function _attachAllEvents(callback) {
 		for (box of boxes) {
-			box.removeEventListener("click", _newPlay);
+			box.addEventListener("click", callback);
 		}
 	}
-})();
+
+	function _detachAllEvents(callback) {
+		for (box of boxes) {
+			box.removeEventListener("click", callback);
+		}
+	}
+};
 
 
-let gameBoard = (function () {
+const gameBoard = (function () {
 	let board = Array(9).fill("");
 
 	function addMarker(index, mark) {
