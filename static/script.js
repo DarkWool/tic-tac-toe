@@ -5,12 +5,12 @@ const menu = (function () {
 	const gameSection = document.getElementById("game");
 	const newBg = document.getElementsByClassName("green-bg")[0];
 	
-	onePlayerBtn.addEventListener("click", startGame.bind(onePlayerBtn, "onePlayer"));
-	twoPlayersBtn.addEventListener("click", startGame.bind(twoPlayersBtn, "twoPlayers"));
+	onePlayerBtn.addEventListener("click", _startGame.bind(onePlayerBtn, "onePlayer"));
+	twoPlayersBtn.addEventListener("click", _startGame.bind(twoPlayersBtn, "twoPlayers"));
 	
-	function startGame(mode) {
+	function _startGame(mode) {
 		game(mode);
-		menu.remove();
+		setTimeout(() => menu.remove(), 500);
 		gameSection.classList.add("flex-container", "active");
 		newBg.classList.add("active");
 	}
@@ -23,7 +23,6 @@ const game = (mode) => {
 	const playerTwo = createPlayer("PC", "O");
 
 	// DOM elements
-	const boardSection = document.getElementById("gameBoard");
 	const gameDisplay = document.getElementById("gameDisplay");
 	const restartBtn = document.getElementById("restartGame");
 	const boxes = document.getElementById("gameBoard").children;
@@ -33,10 +32,10 @@ const game = (mode) => {
 	let turn = "playerOne";
 	let turnsPlayed = 0;
 
-	// Events
+	// Attach Events
 	if (mode === "onePlayer") {
-		restartBtn.addEventListener("click", _restartGame.bind(restartBtn, _spNewPlay));
-		_attachAllEvents(_spNewPlay);
+		restartBtn.addEventListener("click", _restartGame.bind(restartBtn, _playerTurn));
+		_attachAllEvents(_playerTurn);
 	} else {
 		restartBtn.addEventListener("click", _restartGame.bind(restartBtn, _newPlay));
 		_attachAllEvents(_newPlay);
@@ -49,23 +48,21 @@ const game = (mode) => {
 	let markerOne = playerOne.marker;
 	let markerTwo = playerTwo.marker;
 
-	function _spNewPlay(e) {
+	function _playerTurn(e) {
 		const box = e.target;
 		if (_turnLogic(boxesArray.indexOf(box), box, markerOne)) return;
 
-		_newComputerPlay();
+		_computerTurn();
 	}
 
-	function _newComputerPlay() {
-		let index;
+	function _computerTurn() {
 		let board = gameBoard.getBoard();
+		let index = _minimax(board, false).index;
 
-		do {
-			index = _getRandomIndex();
-		} while (board[index]);
-
-		boxes[index].classList.add("second-player");
-		_turnLogic(index, boxes[index], markerTwo);
+		setTimeout(() => {
+			boxes[index].classList.add("second-player");
+			_turnLogic(index, boxes[index], markerTwo);
+		}, 350);
 	}
 
 	function _turnLogic(index, box, marker) {
@@ -74,31 +71,76 @@ const game = (mode) => {
 		gameBoard.addMarker(index, marker);
 		
 		_render();
-		box.removeEventListener("click", _spNewPlay);
+		box.removeEventListener("click", _playerTurn);
 
-		if (_checkForWinOrDraw(marker)) return true;
-
-		_changePlayersTurn();
-	}
-
-	function _getRandomIndex() {
-		return Math.floor(Math.random() * 9);
-	}
-
-	function _checkForWinOrDraw(marker) {
 		if (turnsPlayed > 4 && gameBoard.checkForWin()) {
-			_detachAllEvents(_spNewPlay);
+			_detachAllEvents(_playerTurn);
 			_setWinMessage(marker);
 			return true;
 		} else if (turnsPlayed === 9) {
 			_setDrawMessage();
 			return true;
 		}
+
+		_changePlayersTurn();
 	}
 
-	
+	function _minimax(newBoard, maximizing = true, depth = 0) {
+		// Base case
+		if (gameBoard.checkForWin(newBoard)) {
+			return (!maximizing) ? 100 - depth : depth + -100;
+		} else if (newBoard.every(el => el !== "")) {
+			return 0;
+		}
 
-	// General functions
+		let availSpots = _getAvailableSpots(newBoard);
+		const moves = [];
+
+		let best = {
+			value: Infinity
+		};
+
+		// Recursive case
+		availSpots.forEach((el) => {
+			let arr = [...newBoard];
+			let result;
+
+			if (maximizing) {
+				arr[el] = "X";
+				result = _minimax(arr, false, depth + 1);
+			} else {
+				arr[el] = "O";
+				result = _minimax(arr, true, depth + 1);
+			}
+			
+			// Get the value from minimax and compare it with the best one that has been found.
+			// if its less than the minimum value store it in the "best" object replacing the current one. 
+			if (depth !== 0) {
+				moves.push(result);
+			} else {
+				best = (result < best.value) ? { value: result, index: el } : best;
+			}
+		});	
+
+		
+		if (depth === 0) {
+			return best;
+		}
+		
+		// You store the return values of the minimax functions inside an array, compare the values and return a single one.
+		if (maximizing) return Math.max(...moves);
+		else return Math.min(...moves);
+	}
+
+	function _getAvailableSpots(board) {
+		const spots = [];
+		board.forEach((el, index) => {
+			if (el === "") spots.push(index);
+		});
+		return spots;
+	}
+
+	// Functions for 2 players mode
 	function _newPlay(e) {
 		turnsPlayed++;
 		const box = e.target;
@@ -128,6 +170,7 @@ const game = (mode) => {
 		return (turn === "playerOne") ? playerOne : playerTwo;
 	}
 
+	// General functions
 	function _changePlayersTurn() {
 		if (turn === "playerOne") {
 			turn = "playerTwo";
@@ -190,12 +233,12 @@ const gameBoard = (function () {
 		board = Array(9).fill("");
 	}
 
-	function checkForWin() {
+	function checkForWin(newBoard = board) {
 		const winConditions = [[0, 1, 2], [3, 4, 5], [6, 7, 8], [0, 3, 6], [1, 4, 7], [2, 5, 8], [0, 4, 8], [2, 4, 6]];
 
-		return winConditions.find((curr, index) => {
-			return (board[curr[0]] &&
-				(board[curr[0]] === board[curr[1]] && board[curr[1]] === board[curr[2]]));
+		return winConditions.find((curr) => {
+			return (newBoard[curr[0]] &&
+				(newBoard[curr[0]] === newBoard[curr[1]] && newBoard[curr[1]] === newBoard[curr[2]]));
 		})
 	}
 
