@@ -5,11 +5,15 @@ const menu = (function () {
 	const gameSection = document.getElementById("game");
 	const newBg = document.getElementsByClassName("green-bg")[0];
 	
-	onePlayerBtn.addEventListener("click", _startGame.bind(onePlayerBtn, "onePlayer"));
-	twoPlayersBtn.addEventListener("click", _startGame.bind(twoPlayersBtn, "twoPlayers"));
-	
-	function _startGame(mode) {
-		game(mode);
+	onePlayerBtn.addEventListener("click", _startGame);
+	twoPlayersBtn.addEventListener("click", _startGame);
+
+	function _startGame(e) {
+		onePlayerBtn.removeEventListener("click", _startGame);
+		twoPlayersBtn.removeEventListener("click", _startGame);
+
+		game(e.target.id);
+
 		setTimeout(() => menu.remove(), 500);
 		gameSection.classList.add("flex-container", "active");
 		newBg.classList.add("active");
@@ -24,22 +28,30 @@ const game = (mode) => {
 
 	// DOM elements
 	const gameDisplay = document.getElementById("gameDisplay");
+	const modeDisplay = document.getElementById("modeDisplay");
 	const restartBtn = document.getElementById("restartGame");
 	const boxes = document.getElementById("gameBoard").children;
 	const boxesArray = Array.from(boxes);
+	const changeMode = document.getElementById("changeMode");
 
 	// Variables
 	let turn = "playerOne";
 	let turnsPlayed = 0;
 
-	// Attach Events
+	let wrapper;
+
+	// Initial state
 	if (mode === "onePlayer") {
-		restartBtn.addEventListener("click", _restartGame.bind(restartBtn, _playerTurn));
+		modeDisplay.textContent = "Single player mode";
+		restartBtn.addEventListener("click", wrapper = function () { _restartGame(_playerTurn)});
 		_attachAllEvents(_playerTurn);
 	} else {
-		restartBtn.addEventListener("click", _restartGame.bind(restartBtn, _newPlay));
+		modeDisplay.textContent = "Two players mode";
+		restartBtn.addEventListener("click", wrapper = function () { _restartGame(_newPlay) });
 		_attachAllEvents(_newPlay);
 	}
+
+	changeMode.addEventListener("click", _changeMode);
 
 	// Initial state
 	gameDisplay.textContent = `${playerOne.marker}'s turn`;
@@ -207,6 +219,24 @@ const game = (mode) => {
 		gameBoard.getBoard().forEach((el, index) => boxes[index].textContent = el);
 	}
 
+	function _changeMode() {
+		if (mode === "onePlayer") {
+			mode = "twoPlayers";
+			modeDisplay.textContent = "Two players mode";
+			_detachAllEvents(_playerTurn);
+			_restartGame(_newPlay);
+			restartBtn.removeEventListener("click", wrapper);
+			restartBtn.addEventListener("click", wrapper = function () { _restartGame(_newPlay) });
+		} else {
+			mode = "onePlayer";
+			modeDisplay.textContent = "Single player mode";
+			_detachAllEvents(_newPlay);
+			_restartGame(_playerTurn);
+			restartBtn.removeEventListener("click", wrapper);
+			restartBtn.addEventListener("click", wrapper = function () { _restartGame(_playerTurn) });
+		}
+	}
+
 	// Events functions
 	function _attachAllEvents(callback) {
 		for (box of boxes) {
@@ -220,7 +250,6 @@ const game = (mode) => {
 		}
 	}
 };
-
 
 const gameBoard = (function () {
 	let board = Array(9).fill("");
