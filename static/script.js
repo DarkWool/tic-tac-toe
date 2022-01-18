@@ -27,25 +27,32 @@ const game = (mode) => {
 	const playerTwo = createPlayer("PC", "O");
 
 	// DOM elements
+	const gameGrid = document.getElementById("gameBoard");
 	const gameDisplay = document.getElementById("gameDisplay");
 	const modeDisplay = document.getElementById("modeDisplay");
 	const restartBtn = document.getElementById("restartGame");
 	const boxes = document.getElementById("gameBoard").children;
 	const boxesArray = Array.from(boxes);
 	const changeMode = document.getElementById("changeMode");
-
+	const changeDifficulty = document.getElementById("gameDifficulty");
+	
 	// Variables
 	let turn = "playerOne";
 	let turnsPlayed = 0;
-
 	let wrapper;
-
+	let maxDepth = -1;
+	
 	// Initial state
 	if (mode === "onePlayer") {
+		changeDifficulty.hidden = false;
+		changeDifficulty.addEventListener("change", _changeDifficulty);
+
 		modeDisplay.textContent = "Single player mode";
-		restartBtn.addEventListener("click", wrapper = function () { _restartGame(_playerTurn)});
+		restartBtn.addEventListener("click", wrapper = function () { _restartGame(_playerTurn) });
 		_attachAllEvents(_playerTurn);
 	} else {
+		changeDifficulty.hidden = true;
+
 		modeDisplay.textContent = "Two players mode";
 		restartBtn.addEventListener("click", wrapper = function () { _restartGame(_newPlay) });
 		_attachAllEvents(_newPlay);
@@ -62,19 +69,24 @@ const game = (mode) => {
 
 	function _playerTurn(e) {
 		const box = e.target;
+		box.classList.add("first-player");
 		if (_turnLogic(boxesArray.indexOf(box), box, markerOne)) return;
 
 		_computerTurn();
 	}
 
 	function _computerTurn() {
+		gameGrid.classList.add("game-block");
 		let board = gameBoard.getBoard();
-		let index = _minimax(board, false).index;
+		let finalResults = new Map();
+		let index = _minimax(board, false, 0, finalResults);
 
 		setTimeout(() => {
 			boxes[index].classList.add("second-player");
 			_turnLogic(index, boxes[index], markerTwo);
-		}, 350);
+			gameGrid.classList.remove("game-block");
+		}, 325);
+
 	}
 
 	function _turnLogic(index, box, marker) {
@@ -97,20 +109,16 @@ const game = (mode) => {
 		_changePlayersTurn();
 	}
 
-	function _minimax(newBoard, maximizing = true, depth = 0) {
+	function _minimax(newBoard, maximizing = true, depth = 0, map) {
 		// Base case
 		if (gameBoard.checkForWin(newBoard)) {
 			return (!maximizing) ? 100 - depth : depth + -100;
-		} else if (newBoard.every(el => el !== "")) {
+		} else if (newBoard.every(el => el !== "") || depth === maxDepth) {
 			return 0;
 		}
 
 		let availSpots = _getAvailableSpots(newBoard);
 		const moves = [];
-
-		let best = {
-			value: Infinity
-		};
 
 		// Recursive case
 		availSpots.forEach((el) => {
@@ -130,13 +138,15 @@ const game = (mode) => {
 			if (depth !== 0) {
 				moves.push(result);
 			} else {
-				best = (result < best.value) ? { value: result, index: el } : best;
+				(map.has(result)) ? map.get(result).push(el) : map.set(result, [el]);
 			}
 		});	
 
 		
 		if (depth === 0) {
-			return best;
+			let minResult = Math.min(...map.keys());
+			let index = Math.floor(Math.random() * (map.get(minResult).length));
+			return map.get(minResult)[index];
 		}
 		
 		// You store the return values of the minimax functions inside an array, compare the values and return a single one.
@@ -152,6 +162,24 @@ const game = (mode) => {
 		return spots;
 	}
 
+	function _changeDifficulty(e) {
+		_restartGame(_playerTurn);
+
+		switch (e.target.value) {
+			case "easy":
+				maxDepth = 1;
+				break;
+			case "normal":
+				maxDepth = 4;
+				break;
+			case "hard":
+				maxDepth = 8;
+				break;
+			default:
+				maxDepth = -1;
+		}
+	}
+
 	// Functions for 2 players mode
 	function _newPlay(e) {
 		turnsPlayed++;
@@ -159,7 +187,7 @@ const game = (mode) => {
 		
 		let player = _getPlayer();
 		let marker = player.marker;
-		(marker === 'O') ? box.classList.add("second-player") : false;
+		(marker === 'O') ? box.classList.add("second-player") : box.classList.add("first-player");
 		
 		gameBoard.addMarker(boxesArray.indexOf(box), marker);
 		
@@ -210,7 +238,7 @@ const game = (mode) => {
 
 		for (box of boxes) {
 			box.innerHTML = "";
-			box.classList.remove("second-player");
+			box.classList.remove("first-player", "second-player");
 			box.addEventListener("click", callback);
 		}
 	}
@@ -221,6 +249,7 @@ const game = (mode) => {
 
 	function _changeMode() {
 		if (mode === "onePlayer") {
+			changeDifficulty.hidden = true;
 			mode = "twoPlayers";
 			modeDisplay.textContent = "Two players mode";
 			_detachAllEvents(_playerTurn);
@@ -228,6 +257,7 @@ const game = (mode) => {
 			restartBtn.removeEventListener("click", wrapper);
 			restartBtn.addEventListener("click", wrapper = function () { _restartGame(_newPlay) });
 		} else {
+			changeDifficulty.hidden = false;
 			mode = "onePlayer";
 			modeDisplay.textContent = "Single player mode";
 			_detachAllEvents(_newPlay);

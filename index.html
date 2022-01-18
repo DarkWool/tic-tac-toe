@@ -38,11 +38,18 @@
                 <div></div>
                 <div></div>
             </section>
+            <select name="gameDifficulty" id="gameDifficulty" autocomplete="off" hidden>
+                <option value="easy">Easy</option>
+                <option value="normal">Normal</option>
+                <option value="hard">Hard</option>
+                <option selected value="impossible">Impossible</option>
+            </select>
+            
+            <p id="modeDisplay">SINGLE PLAYER MODE</p>
             <div>
                 <button type="button" id="restartGame" class="game-btn">Restart Game</button>
                 <button type="button" id="changeMode" class="game-btn">Change mode</button>
             </div>
-            <p id="modeDisplay">SINGLE PLAYER MODE</p>
         </section>
     </main>
 </body>
