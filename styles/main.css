@@ -376,7 +376,7 @@ h1 {
 
 @media only screen and (max-width: 992px) {
     .background-shape.left {
-        left: 15%;
+        left: 14%;
     }
 }
 
@@ -384,39 +384,39 @@ h1 {
     .background-shape.left {
         font-size: 7.5rem;
         left: 17%;
-        bottom: 28%;
+        bottom: 25%;
     }
 
     .background-shape.right {
-        font-size: 7rem;
+        font-size: 6.5rem;
         right: 12%;
         top: 25%;
     }
 
     .background-shape.down {
-        font-size: 7rem;
-        right: 12%;
+        font-size: 6rem;
+        right: 8%;
     }
 
     .background-shape.up {
-        font-size: 5rem;
-        top: 3%;
+        font-size: 4.5rem;
+        top: 1%;
         left: 35%;
     }
 }
 
 @media only screen and (max-width: 600px) {
     h1 {
-        font-size: 8rem;
+        font-size: 7rem;
     }
 
     button {
-        font-size: 1.8rem;
+        font-size: 1.6rem;
     }
 
     .primary-btn {
-        padding: 2rem 3rem;
-        margin: 10px 5px;
+        padding: 20px 25px;
+        margin: 0 2px;
     }
 
     h2 {
@@ -425,20 +425,28 @@ h1 {
 
     .display {
         font-size: 2rem;
+        margin-top: 0;
+    }
+
+    select {
+        font-size: 1.4rem;
+        margin-bottom: 0;
     }
 
     .game-btn {
-        font-size: 1.4rem;
+        font-size: 1.3rem;
+        padding: 15px;
+        margin: 0 4px;
     }
 
     #gameBoard {
         gap: 7px;
-        grid-template-columns: repeat(3, minmax(75px, 100px));
-        grid-template-rows: repeat(3, minmax(75px, 100px));
+        grid-template-columns: repeat(3, minmax(75px, 95px));
+        grid-template-rows: repeat(3, minmax(75px, 95px));
     }
 
     #gameBoard > div {
-        font-size: 6.5rem;
+        font-size: 6rem;
     }
 }
 
