@@ -16,16 +16,17 @@
             <div class="background-shape up">O</div>
             <div class="background-shape down">x</div>
             <h1>TIC-TAC-TOE</h1>
-            <div>
+            <div class="menu-options">
                 <button type="button" id="onePlayer" class="primary-btn">1 player</button>
                 <button type="button" id="twoPlayers" class="primary-btn">2 players</button>
             </div>
         </section>
-        
         <section id="game" class="green-bg">
             <header>
                 <h2>TIC-TAC-TOE</h2>
-                <p id="gameDisplay"></p>
+                <div class="display">
+                    <p id="gameDisplay"></p>
+                </div>
             </header>
             <section id="gameBoard">
                 <div></div>
@@ -38,17 +39,9 @@
                 <div></div>
                 <div></div>
             </section>
-            <select name="gameDifficulty" id="gameDifficulty" autocomplete="off" hidden>
-                <option value="easy">Easy</option>
-                <option value="normal">Normal</option>
-                <option value="hard">Hard</option>
-                <option selected value="impossible">Impossible</option>
-            </select>
-            
-            <p id="modeDisplay">SINGLE PLAYER MODE</p>
-            <div>
-                <button type="button" id="restartGame" class="game-btn">Restart Game</button>
+            <div class="game-options">
                 <button type="button" id="changeMode" class="game-btn">Change mode</button>
+                <button type="button" id="restartGame" class="game-btn">Restart Game</button>
             </div>
         </section>
     </main>
