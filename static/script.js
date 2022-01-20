@@ -29,38 +29,42 @@ const game = (mode) => {
 	// DOM elements
 	const gameGrid = document.getElementById("gameBoard");
 	const gameDisplay = document.getElementById("gameDisplay");
-	const modeDisplay = document.getElementById("modeDisplay");
 	const restartBtn = document.getElementById("restartGame");
 	const boxes = document.getElementById("gameBoard").children;
 	const boxesArray = Array.from(boxes);
 	const changeMode = document.getElementById("changeMode");
-	const changeDifficulty = document.getElementById("gameDifficulty");
 	
 	// Variables
 	let turn = "playerOne";
 	let turnsPlayed = 0;
 	let wrapper;
 	let maxDepth = -1;
-	
+	const difficultyMenuCode = `<select name="gameDifficulty" id="gameDifficulty" autocomplete="off">
+                <option value="easy">Easy</option>
+                <option value="normal">Normal</option>
+                <option value="hard">Hard</option>
+                <option selected value="impossible">Impossible</option>
+            </select>`;
+	let difficultyMenu;
+
 	// Initial state
 	if (mode === "onePlayer") {
-		changeDifficulty.hidden = false;
-		changeDifficulty.addEventListener("change", _changeDifficulty);
+		changeMode.textContent = "2 PLAYERS";
 
-		modeDisplay.textContent = "Single player mode";
+		gameGrid.insertAdjacentHTML("afterend", difficultyMenuCode);
+		difficultyMenu = document.getElementById("gameDifficulty");
+		difficultyMenu.addEventListener("change", _changeDifficulty);
+		
 		restartBtn.addEventListener("click", wrapper = function () { _restartGame(_playerTurn) });
 		_attachAllEvents(_playerTurn);
 	} else {
-		changeDifficulty.hidden = true;
+		changeMode.textContent = "PLAY VS PC";
 
-		modeDisplay.textContent = "Two players mode";
 		restartBtn.addEventListener("click", wrapper = function () { _restartGame(_newPlay) });
 		_attachAllEvents(_newPlay);
 	}
 
 	changeMode.addEventListener("click", _changeMode);
-
-	// Initial state
 	gameDisplay.textContent = `${playerOne.marker}'s turn`;
 
 	// Functions and vars for Single Player mode.
@@ -97,9 +101,10 @@ const game = (mode) => {
 		_render();
 		box.removeEventListener("click", _playerTurn);
 
-		if (turnsPlayed > 4 && gameBoard.checkForWin()) {
+		let winningResult = gameBoard.checkForWin();
+		if (turnsPlayed > 4 && winningResult) {
 			_detachAllEvents(_playerTurn);
-			_setWinMessage(marker);
+			_setWinState(marker, winningResult);
 			return true;
 		} else if (turnsPlayed === 9) {
 			_setDrawMessage();
@@ -133,11 +138,12 @@ const game = (mode) => {
 				result = _minimax(arr, true, depth + 1);
 			}
 			
-			// Get the value from minimax and compare it with the best one that has been found.
-			// if its less than the minimum value store it in the "best" object replacing the current one. 
+			// If this is NOT the first function call push the result to the 'moves' array to get the minimum value later.
 			if (depth !== 0) {
 				moves.push(result);
 			} else {
+				// Add the result of the minimax function call to 'map' with its respective index
+				// if it has not been added yet create a new array with the first result, otherwise just push the result.
 				(map.has(result)) ? map.get(result).push(el) : map.set(result, [el]);
 			}
 		});	
@@ -149,7 +155,7 @@ const game = (mode) => {
 			return map.get(minResult)[index];
 		}
 		
-		// You store the return values of the minimax functions inside an array, compare the values and return a single one.
+		// You store the return values of the minimax functions inside an array, get the min value and return it.
 		if (maximizing) return Math.max(...moves);
 		else return Math.min(...moves);
 	}
@@ -194,11 +200,13 @@ const game = (mode) => {
 		_render();
 		box.removeEventListener("click", _newPlay);
 
+		let winningResult = gameBoard.checkForWin();
+		
 		// Check if anyone has won when 4 turns have passed,
 		// if there is not any win and the number of turns is 9 it means that its a draw.
-		if (turnsPlayed > 4 && gameBoard.checkForWin()) {
+		if (turnsPlayed > 4 && winningResult) {
 			_detachAllEvents(_newPlay);
-			return _setWinMessage(marker);
+			return _setWinState(marker, winningResult);
 		} else if (turnsPlayed === 9) {
 			return _setDrawMessage();
 		}
@@ -221,12 +229,34 @@ const game = (mode) => {
 		}
 	}
 	
-	function _setWinMessage(marker) {
+	function _setWinState(marker, move) {
 		gameDisplay.textContent = `${marker}'s have won!`;
+		gameDisplay.classList.add("end-result");
+
+		move = move.join("");
+		switch (move) {
+			case "012":
+			case "345":
+			case "678":
+				gameGrid.classList.add("final-h");
+				break;
+			case "036":
+			case "147":
+			case "258":
+				gameGrid.classList.add("final-v");
+				break;
+			case "048":
+			case "246":
+				gameGrid.classList.add("final-d");
+				break;
+		}
+
+		gameGrid.classList.add(`mv${move}`);
 	}
 	
 	function _setDrawMessage() {
 		gameDisplay.textContent = "Draw";
+		gameDisplay.classList.add("end-result");
 	}
 	
 	function _restartGame(callback) {
@@ -235,6 +265,9 @@ const game = (mode) => {
 		turnsPlayed = 0;
 		turn = "playerOne";
 		gameDisplay.textContent = `${playerOne.marker}'s turn`;
+		gameDisplay.classList.remove("end-result");
+
+		gameGrid.removeAttribute("class");
 
 		for (box of boxes) {
 			box.innerHTML = "";
@@ -249,19 +282,27 @@ const game = (mode) => {
 
 	function _changeMode() {
 		if (mode === "onePlayer") {
-			changeDifficulty.hidden = true;
+			(difficultyMenu) ? difficultyMenu.remove() : false;
+
 			mode = "twoPlayers";
-			modeDisplay.textContent = "Two players mode";
+			changeMode.textContent = "PLAY vs PC";
+
 			_detachAllEvents(_playerTurn);
 			_restartGame(_newPlay);
+
 			restartBtn.removeEventListener("click", wrapper);
 			restartBtn.addEventListener("click", wrapper = function () { _restartGame(_newPlay) });
 		} else {
-			changeDifficulty.hidden = false;
+			gameGrid.insertAdjacentHTML("afterend", difficultyMenuCode);
+			difficultyMenu = document.getElementById("gameDifficulty");
+			difficultyMenu.addEventListener("change", _changeDifficulty);
+
 			mode = "onePlayer";
-			modeDisplay.textContent = "Single player mode";
+			changeMode.textContent = "2 PLAYERS MODE";
+
 			_detachAllEvents(_newPlay);
 			_restartGame(_playerTurn);
+
 			restartBtn.removeEventListener("click", wrapper);
 			restartBtn.addEventListener("click", wrapper = function () { _restartGame(_playerTurn) });
 		}

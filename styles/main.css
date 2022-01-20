@@ -180,6 +180,67 @@ h2 {
 }
 
 
+/* ------- Board final lines ------- */
+#gameBoard::after {
+    content: "";
+    color: white;
+    background-color: hsl(174, 100%, 50%);
+    width: 0%;
+    height: 0%;
+    position: absolute;
+}
+
+#gameBoard.final-h::after {
+    height: 6px;
+    width: 100%;
+    transition: width 1s ease;
+}
+
+#gameBoard.mv012::after {
+    top: calc(15.82% - 2.5px);
+}
+
+#gameBoard.mv678::after {
+    bottom: calc(15.82% - 2.5px);
+}
+
+#gameBoard.final-v::after {
+    width: 6px;
+    height: 100%;
+    transition: height 1s ease;
+    top: 0;
+}
+
+#gameBoard.mv036::after {
+    left: calc(15.82% - 2.5px);
+}
+
+#gameBoard.mv147::after {
+    right: calc(50% - 3px);
+}
+
+#gameBoard.mv258::after {
+    right: calc(15.82% - 2.5px);
+}
+
+#gameBoard.final-d::after {
+    width: 6px;
+    height: 140%;
+    top: 0;
+    transform-origin: top;
+    transition: height 1s ease;
+}
+
+#gameBoard.mv048::after {
+    transform: rotate(-45deg);
+}
+
+#gameBoard.mv246::after {
+    right: 0;
+    transform: rotate(45deg);
+}
+
+
 /* ------- Select (Game difficulty) ------- */
 select {
     font-family: inherit;
