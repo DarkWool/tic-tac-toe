@@ -255,6 +255,7 @@ select {
     cursor: pointer;
     margin-top: 0;
     margin-bottom: 10px;
+    transition: background .2s ease;
 }
 
 
@@ -378,6 +379,18 @@ h1 {
     .background-shape.left {
         left: 14%;
     }
+
+    select:active {
+        background-color: hsl(0, 0%, 30%);
+    }
+
+    .primary-btn:active {
+        background-color: hsl(173.8, 100%, 30%);
+    }
+
+    .game-btn:active {
+        background-color: hsl(172.6, 42%, 25%);
+    }    
 }
 
 @media only screen and (max-width: 768px) {
@@ -462,6 +475,10 @@ h1 {
         top: -5px;
         background-color: hsl(172.6, 42%, 25%);
         box-shadow: 0px 30px 18px hsl(175deg 80% 16% / 20%), 0px 5.06172px 10px hsl(175deg 74% 18% / 30%);
+    }
+
+    select:hover {
+        background-color: hsl(0, 0%, 30%);
     }
 }
 
