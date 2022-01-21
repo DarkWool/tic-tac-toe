@@ -294,8 +294,12 @@ const game = (mode) => {
 			restartBtn.addEventListener("click", wrapper = function () { _restartGame(_newPlay) });
 		} else {
 			gameGrid.insertAdjacentHTML("afterend", difficultyMenuCode);
+
+			// Restart the whole difficulty menu, including the maxDepth variable, not doing it will
+			// cause errors on the minimax function.
 			difficultyMenu = document.getElementById("gameDifficulty");
 			difficultyMenu.addEventListener("change", _changeDifficulty);
+			maxDepth = -1;
 
 			mode = "onePlayer";
 			changeMode.textContent = "2 PLAYERS MODE";
